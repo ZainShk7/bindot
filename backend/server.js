@@ -16,7 +16,9 @@ app.use(
 );
 app.use(express.json());
 
-app.get("/health", (req, res) => res.json({ ok: true }));
+const health = (req, res) => res.json({ ok: true });
+app.get("/health", health);
+app.get("/api/health", health);
 
 const { notFound, errorHandler } = require("./src/middleware/errors");
 const { authRequired } = require("./src/middleware/auth");

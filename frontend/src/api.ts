@@ -1,8 +1,8 @@
 export function getApiBase(): string {
-  const fromEnv = import.meta.env.VITE_API_URL;
-  if (fromEnv) return fromEnv;
-  if (import.meta.env.DEV) return "";
-  return "http://localhost:5050";
+  const fromEnv = import.meta.env.VITE_API_URL?.trim();
+  if (fromEnv) return fromEnv.replace(/\/$/, "");
+  // Relative URLs: Vite dev proxy, or production when API is same origin (e.g. Vercel Services).
+  return "";
 }
 
 export async function api<T>(

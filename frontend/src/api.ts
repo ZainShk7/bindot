@@ -5,12 +5,24 @@ export function getApiBase(): string {
   return "";
 }
 
+/** Join base + path without duplicating `/api` when env is `.../api` and paths are `/api/...`. */
+export function resolveApiUrl(path: string): string {
+  const base = getApiBase();
+  const p = path.startsWith("/") ? path : `/${path}`;
+  if (!base) return p;
+  const b = base.replace(/\/$/, "");
+  if (b.endsWith("/api") && (p === "/api" || p.startsWith("/api/"))) {
+    return b + p.slice("/api".length);
+  }
+  return b + p;
+}
+
 export async function api<T>(
   path: string,
   opts: RequestInit = {},
   token?: string,
 ): Promise<T> {
-  const res = await fetch(`${getApiBase()}${path}`, {
+  const res = await fetch(resolveApiUrl(path), {
     ...opts,
     headers: {
       "Content-Type": "application/json",

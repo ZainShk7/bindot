@@ -2,6 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const { resolveMongoUri } = require("./src/mongoUri");
 const Admin = require("./src/models/Admin");
 const Customer = require("./src/models/Customer");
 const Vehicle = require("./src/models/Vehicle");
@@ -14,10 +15,10 @@ function addDays(d, n) {
 }
 
 async function run() {
-  const mongoUri = process.env.MONGO_URI;
-  if (!mongoUri) throw new Error("MONGO_URI is required");
+  const resolved = resolveMongoUri();
+  if (!resolved.ok) throw new Error(resolved.error);
 
-  await mongoose.connect(mongoUri);
+  await mongoose.connect(resolved.uri);
 
   // Clean slate (demo convenience)
   await Promise.all([

@@ -20,15 +20,15 @@ const health = (req, res) => res.json({ ok: true });
 app.get("/health", health);
 app.get("/api/health", health);
 
+const { resolveMongoUri } = require("./src/mongoUri");
+
 let mongoPromise = null;
 function ensureMongo() {
   if (mongoose.connection.readyState === 1) return Promise.resolve();
-  const mongoUri = process.env.MONGO_URI;
-  if (!mongoUri) {
-    return Promise.reject(new Error("MONGO_URI is required"));
-  }
+  const resolved = resolveMongoUri();
+  if (!resolved.ok) return Promise.reject(new Error(resolved.error));
   if (!mongoPromise) {
-    mongoPromise = mongoose.connect(mongoUri);
+    mongoPromise = mongoose.connect(resolved.uri);
   }
   return mongoPromise;
 }

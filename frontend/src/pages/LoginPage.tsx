@@ -145,7 +145,7 @@ export function LoginPage() {
                       Please wait…
                     </>
                   ) : mode === "signup" ? (
-                    "Create admin"
+                    "Signup"
                   ) : (
                     "Login"
                   )}

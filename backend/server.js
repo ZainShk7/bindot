@@ -18,7 +18,8 @@ app.use(express.json());
 
 const health = (req, res) => res.json({ ok: true });
 app.get("/health", health);
-app.get("/api/health", health);
+// Note: Vercel `routePrefix: "/api"` already mounts this service under `/api`,
+// so defining `/api/*` routes here would become `/api/api/*` in production.
 
 const { resolveMongoUri } = require("./src/mongoUri");
 
@@ -45,11 +46,11 @@ app.use(async (req, res, next) => {
 const { notFound, errorHandler } = require("./src/middleware/errors");
 const { authRequired } = require("./src/middleware/auth");
 
-app.use("/api/auth", require("./src/routes/auth"));
-app.use("/api/customers", authRequired, require("./src/routes/customers"));
-app.use("/api/vehicles", authRequired, require("./src/routes/vehicles"));
-app.use("/api/bookings", authRequired, require("./src/routes/bookings"));
-app.use("/api/dashboard", authRequired, require("./src/routes/dashboard"));
+app.use("/auth", require("./src/routes/auth"));
+app.use("/customers", authRequired, require("./src/routes/customers"));
+app.use("/vehicles", authRequired, require("./src/routes/vehicles"));
+app.use("/bookings", authRequired, require("./src/routes/bookings"));
+app.use("/dashboard", authRequired, require("./src/routes/dashboard"));
 
 app.use(notFound);
 app.use(errorHandler);
